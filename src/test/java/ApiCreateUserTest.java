@@ -1,3 +1,4 @@
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import model.UserAuthModel;
 import model.UserModel;
@@ -14,6 +15,7 @@ public class ApiCreateUserTest extends BaseApiTest{
 
     @Test
     @DisplayName("Код ответа 200 OK при создании уникального пользователя")
+    @Description("Успешное создание уникального пользователя")
     public void createUniqueUser() {
         UserModel user = new UserModel(EMAIL, PASSWORD, NAME);
 
@@ -25,6 +27,7 @@ public class ApiCreateUserTest extends BaseApiTest{
 
     @Test
     @DisplayName("Код ответа 403 при создании существующего пользователя")
+    @Description("Создание пользователя с существующими данными")
     public void createExistingUser() {
         UserModel user = new UserModel(EMAIL, PASSWORD, NAME);
         createUser(user);
@@ -37,35 +40,42 @@ public class ApiCreateUserTest extends BaseApiTest{
 
     @Test
     @DisplayName("Код ответа 403, если при создании не указать Email")
+    @Description("Создание пользователя без Email")
     public void createUserWithoutEmail() {
         UserModel user = new UserModel(null, PASSWORD, NAME);
 
         createUser(user)
                 .then()
                 .statusCode(SC_FORBIDDEN)
-                .body("success", equalTo(false));
+                .body("success", equalTo(false))
+                .body("message", equalTo("Email, password and name are required fields"));
     }
 
     @Test
     @DisplayName("Код ответа 403, если при создании не указать пароль")
+    @Description("Создание пользователя без пароля")
     public void createUserWithoutPassword() {
         UserModel user = new UserModel(EMAIL, null, NAME);
 
         createUser(user)
                 .then()
                 .statusCode(SC_FORBIDDEN)
-                .body("success", equalTo(false));
+                .body("success", equalTo(false))
+                .body("message", equalTo("Email, password and name are required fields"));
+
     }
 
     @Test
     @DisplayName("Код ответа 403, если при создании не указать имя")
+    @Description("Создание пользователя без имени")
     public void createUserWithoutName() {
         UserModel user = new UserModel(EMAIL, PASSWORD, null);
 
         createUser(user)
                 .then()
                 .statusCode(SC_FORBIDDEN)
-                .body("success", equalTo(false));
+                .body("success", equalTo(false))
+                .body("message", equalTo("Email, password and name are required fields"));
     }
 
 

@@ -1,7 +1,10 @@
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.RestAssured;
 import model.UserAuthModel;
 import model.UserModel;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static TestData.TestData.*;
@@ -11,14 +14,19 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static steps.stepsUser.*;
 import static steps.stepsUser.getUserToken;
 
-public class ApiLoginUserTest extends BaseApiTest{
+public class ApiLoginUserTest{
+
+    @Before
+    public void setUp() {
+        RestAssured.baseURI = URL;
+        UserModel userCreate = new UserModel(EMAIL, PASSWORD, NAME);
+        createUser(userCreate);
+    }
 
     @Test
     @DisplayName("Код 200 при входе с существующими данными")
+    @Description("Авторизация существующими данными")
     public void userLogin() {
-        UserModel userCreate = new UserModel(EMAIL, PASSWORD, NAME);
-        createUser(userCreate);
-
         UserAuthModel user = new UserAuthModel(EMAIL, PASSWORD);
 
         authUser(user)
@@ -30,10 +38,8 @@ public class ApiLoginUserTest extends BaseApiTest{
 
     @Test
     @DisplayName("Ошибка 401 при авторизации без Email")
+    @Description("Авторизация без Email")
     public void userLoginWithoutEmail() {
-        UserModel userCreate = new UserModel(EMAIL, PASSWORD, NAME);
-        createUser(userCreate);
-
         UserAuthModel user = new UserAuthModel(null, PASSWORD);
 
         authUser(user)
@@ -44,10 +50,8 @@ public class ApiLoginUserTest extends BaseApiTest{
 
     @Test
     @DisplayName("Ошибка 401 при авторизации без пароля")
+    @Description("Авторизация без пароля")
     public void userLoginWithoutPassword() {
-        UserModel userCreate = new UserModel(EMAIL, PASSWORD, NAME);
-        createUser(userCreate);
-
         UserAuthModel user = new UserAuthModel(EMAIL, null);
 
         authUser(user)
